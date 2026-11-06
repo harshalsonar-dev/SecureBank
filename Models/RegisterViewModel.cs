@@ -11,6 +11,7 @@ namespace SecureBank.Models
 
         [Required(ErrorMessage = "Email address is required.")]
         [EmailAddress(ErrorMessage = "Invalid email address format.")]
+        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Invalid email address format.")]
         [StringLength(100, ErrorMessage = "Email cannot exceed 100 characters.")]
         public string Email { get; set; } = string.Empty;
 
@@ -28,7 +29,7 @@ namespace SecureBank.Models
         [Compare("Password", ErrorMessage = "Passwords do not match.")]
         public string ConfirmPassword { get; set; } = string.Empty;
 
-        [Range(0, 1000000, ErrorMessage = "Initial deposit must be between $0.00 and $1,000,000.00.")]
+        [Range(typeof(decimal), "0.00", "1000000.00", ErrorMessage = "Initial deposit must be between $0.00 and $1,000,000.00.")]
         [Display(Name = "Initial Deposit")]
         public decimal InitialDeposit { get; set; } = 100.00m; // Default complimentary deposit
     }
