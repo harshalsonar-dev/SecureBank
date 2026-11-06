@@ -1,0 +1,67 @@
+@{
+    ViewData["Title"] = "Secure Login";
+}
+
+<div class="row justify-content-center align-items-center mt-3">
+    <div class="col-12 col-md-8 col-lg-5 col-xl-4">
+        <div class="card card-custom p-4 bg-white">
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-circle mb-3" style="width: 64px; height: 64px;">
+                        <i class="fa-solid fa-lock fs-2"></i>
+                    </div>
+                    <h3 class="fw-bold mb-1">Secure Sign In</h3>
+                    <p class="text-muted small">Access your SecureBank online account</p>
+                </div>
+
+                <form asp-controller="Auth" asp-action="Login" method="post" autocomplete="off">
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3">
+                        <label for="username" class="form-label fw-semibold">Username</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light text-muted"><i class="fa-solid fa-user"></i></span>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="username" 
+                                   name="username" 
+                                   placeholder="Enter your username" 
+                                   required 
+                                   maxlength="50"
+                                   autofocus />
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password" class="form-label fw-semibold">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light text-muted"><i class="fa-solid fa-key"></i></span>
+                            <input type="password" 
+                                   class="form-control" 
+                                   id="password" 
+                                   name="password" 
+                                   placeholder="Enter your password" 
+                                   required />
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold shadow-sm">
+                        <i class="fa-solid fa-arrow-right-to-bracket me-1"></i> Sign In to Account
+                    </button>
+                </form>
+            </div>
+            <div class="card-footer bg-transparent border-0 text-center pt-0 pb-3">
+                <p class="text-muted small mb-2">
+                    Don't have an account yet? <a asp-controller="Auth" asp-action="Register" class="fw-semibold text-decoration-none">Open an Account</a>
+                </p>
+                <small class="text-muted">
+                    <i class="fa-solid fa-shield-halved text-success"></i> Sessions expire automatically after 20 minutes of inactivity.
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

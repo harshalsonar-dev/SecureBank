@@ -1,0 +1,11 @@
+**/.git
+**/.gitignore
+**/.vs
+**/.vscode
+**/bin
+**/obj
+**/docker-compose*
+**/.dockerignore
+Dockerfile*
+*.md
+DatabaseScripts/

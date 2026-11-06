@@ -1,0 +1,35 @@
+@model SecureBank.Models.ErrorViewModel
+@{
+    ViewData["Title"] = "System Notification";
+}
+
+<div class="row justify-content-center my-5">
+    <div class="col-12 col-md-8 col-lg-6 text-center">
+        <div class="card card-custom p-5 bg-white">
+            <div class="d-inline-flex align-items-center justify-content-center bg-danger bg-opacity-10 text-danger rounded-circle mx-auto mb-4" style="width: 80px; height: 80px;">
+                <i class="fa-solid fa-triangle-exclamation fs-1"></i>
+            </div>
+            
+            <h3 class="fw-bold text-dark mb-2">Notice: Request Could Not Be Completed</h3>
+            <p class="text-muted mb-4">
+                @Model.Message
+            </p>
+
+            @if (Model.ShowRequestId)
+            {
+                <div class="alert alert-light border small text-muted py-2 mb-4">
+                    <strong>Incident Tracking ID:</strong> <code>@Model.RequestId</code>
+                </div>
+            }
+
+            <div class="d-flex justify-content-center gap-3">
+                <a asp-controller="Transaction" asp-action="Dashboard" class="btn btn-primary px-4 fw-semibold">
+                    <i class="fa-solid fa-house me-1"></i> Return to Dashboard
+                </a>
+                <a asp-controller="Auth" asp-action="Login" class="btn btn-outline-secondary px-4 fw-semibold">
+                    <i class="fa-solid fa-lock me-1"></i> Sign In Page
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

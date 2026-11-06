@@ -1,0 +1,227 @@
+@model SecureBank.Models.DashboardViewModel
+@{
+    ViewData["Title"] = "Account Dashboard";
+}
+
+<!-- Welcome Header & Summary Banner -->
+<div class="row align-items-center mb-4">
+    <div class="col-md-8">
+        <h2 class="fw-bold mb-1">
+            <span class="text-secondary fw-normal">Welcome back,</span> @Model.Username!
+        </h2>
+        <p class="text-muted mb-0">Here is your consolidated financial overview and recent activity.</p>
+    </div>
+    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+        <span class="badge bg-light text-dark border px-3 py-2 fs-6">
+            <i class="fa-solid fa-user-tag text-info me-1"></i> Role: @Model.Role
+        </span>
+    </div>
+</div>
+
+<!-- Primary Financial Balance Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-12 col-md-4">
+        <div class="card card-custom p-4 bg-white text-dark h-100">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <span class="text-muted fw-semibold text-uppercase small">Total Liquid Balance</span>
+                <div class="bg-primary bg-opacity-10 text-primary p-2 rounded-circle">
+                    <i class="fa-solid fa-wallet fs-5"></i>
+                </div>
+            </div>
+            <h2 class="fw-bold text-primary mb-1">
+                @Model.TotalBalance.ToString("C")
+            </h2>
+            <small class="text-success fw-semibold">
+                <i class="fa-solid fa-shield-check"></i> FDIC Insured &amp; Verified
+            </small>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+        <div class="card card-custom p-4 bg-white text-dark h-100">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <span class="text-muted fw-semibold text-uppercase small">Primary Account</span>
+                <div class="bg-info bg-opacity-10 text-info p-2 rounded-circle">
+                    <i class="fa-solid fa-credit-card fs-5"></i>
+                </div>
+            </div>
+            @if (Model.Accounts.Any())
+            {
+                var primary = Model.Accounts.First();
+                <h4 class="fw-bold mb-1">@primary.AccountNumber</h4>
+                <div class="d-flex justify-content-between align-items-center mt-2">
+                    <span class="badge bg-secondary">@primary.AccountType</span>
+                    <span class="fw-semibold text-dark">@primary.Balance.ToString("C")</span>
+                </div>
+            }
+            else
+            {
+                <h5 class="text-muted">No accounts registered</h5>
+            }
+        </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+        <div class="card card-custom p-4 bg-white text-dark h-100 d-flex flex-column justify-content-between">
+            <span class="text-muted fw-semibold text-uppercase small mb-2">Quick Banking Actions</span>
+            <div class="d-flex gap-2 flex-wrap">
+                <a asp-controller="Transaction" asp-action="Transfer" class="btn btn-outline-primary btn-sm flex-fill fw-semibold">
+                    <i class="fa-solid fa-money-bill-transfer me-1"></i> Transfer
+                </a>
+                <a asp-controller="Transaction" asp-action="Deposit" class="btn btn-outline-success btn-sm flex-fill fw-semibold">
+                    <i class="fa-solid fa-circle-down me-1"></i> Deposit
+                </a>
+                <a asp-controller="Transaction" asp-action="Withdraw" class="btn btn-outline-danger btn-sm flex-fill fw-semibold">
+                    <i class="fa-solid fa-circle-up me-1"></i> Withdraw
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Active Accounts Overview -->
+<div class="card card-custom bg-white mb-4">
+    <div class="card-header bg-transparent border-0 pt-4 px-4 pb-2 d-flex justify-content-between align-items-center">
+        <h5 class="fw-bold mb-0">
+            <i class="fa-solid fa-vault text-info me-2"></i> Your Accounts
+        </h5>
+        <span class="badge bg-light text-muted border">@Model.Accounts.Count Active</span>
+    </div>
+    <div class="card-body px-4 pb-4 pt-2">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light small text-uppercase">
+                    <tr>
+                        <th>Account ID</th>
+                        <th>Account Number</th>
+                        <th>Type</th>
+                        <th>Currency</th>
+                        <th>Status</th>
+                        <th class="text-end">Current Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var acc in Model.Accounts)
+                    {
+                        <tr>
+                            <td><span class="badge bg-light text-dark border">#@acc.AccountId</span></td>
+                            <td class="fw-semibold font-monospace">@acc.AccountNumber</td>
+                            <td><span class="badge bg-info bg-opacity-10 text-info">@acc.AccountType</span></td>
+                            <td>@acc.Currency</td>
+                            <td>
+                                @if (acc.IsActive)
+                                {
+                                    <span class="badge bg-success bg-opacity-10 text-success">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger bg-opacity-10 text-danger">Locked</span>
+                                }
+                            </td>
+                            <td class="text-end fw-bold fs-6">@acc.Balance.ToString("C")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Transactions (Last 10) -->
+<div class="card card-custom bg-white">
+    <div class="card-header bg-transparent border-0 pt-4 px-4 pb-2 d-flex justify-content-between align-items-center">
+        <div>
+            <h5 class="fw-bold mb-0">
+                <i class="fa-solid fa-clock-rotate-left text-primary me-2"></i> Recent Transaction History
+            </h5>
+            <small class="text-muted">Showing the last 10 ACID-committed ledger records</small>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-controller="Transaction" asp-action="Transfer" class="btn btn-sm btn-primary">
+                <i class="fa-solid fa-plus me-1"></i> New Transaction
+            </a>
+        </div>
+    </div>
+    <div class="card-body px-4 pb-4 pt-2">
+        @if (Model.RecentTransactions.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light small text-uppercase">
+                        <tr>
+                            <th>Date / Time (UTC)</th>
+                            <th>Reference ID</th>
+                            <th>Type</th>
+                            <th>From / To</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th class="text-end">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var tx in Model.RecentTransactions)
+                        {
+                            var isCredit = tx.TransactionType == "Deposit" || (tx.TransactionType == "Transfer" && Model.Accounts.Any(a => a.AccountId == tx.ToAccountId));
+                            <tr>
+                                <td class="small text-muted">@tx.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                <td>
+                                    <code class="small text-muted" title="@tx.TransactionReference">
+                                        @tx.TransactionReference.ToString().Substring(0, 8)...
+                                    </code>
+                                </td>
+                                <td>
+                                    @if (tx.TransactionType == "Deposit")
+                                    {
+                                        <span class="badge bg-success bg-opacity-10 text-success"><i class="fa-solid fa-arrow-down me-1"></i> Deposit</span>
+                                    }
+                                    else if (tx.TransactionType == "Withdrawal")
+                                    {
+                                        <span class="badge bg-danger bg-opacity-10 text-danger"><i class="fa-solid fa-arrow-up me-1"></i> Withdrawal</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-primary bg-opacity-10 text-primary"><i class="fa-solid fa-arrow-right-arrow-left me-1"></i> Transfer</span>
+                                    }
+                                </td>
+                                <td class="small">
+                                    @if (tx.TransactionType == "Transfer")
+                                    {
+                                        <span>Acc #@tx.FromAccountId &rarr; Acc #@tx.ToAccountId</span>
+                                    }
+                                    else if (tx.TransactionType == "Deposit")
+                                    {
+                                        <span>Deposit &rarr; Acc #@tx.ToAccountId</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Acc #@tx.FromAccountId &rarr; Cash</span>
+                                    }
+                                </td>
+                                <td class="small text-muted">@(string.IsNullOrWhiteSpace(tx.Remarks) ? "—" : tx.Remarks)</td>
+                                <td>
+                                    <span class="badge bg-success bg-opacity-10 text-success">@tx.Status</span>
+                                </td>
+                                <td class="text-end fw-bold @(isCredit ? "text-success" : "text-danger")">
+                                    @(isCredit ? "+" : "-")@tx.Amount.ToString("C")
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <div class="d-inline-flex align-items-center justify-content-center bg-light text-muted rounded-circle mb-3" style="width: 60px; height: 60px;">
+                    <i class="fa-solid fa-receipt fs-3"></i>
+                </div>
+                <h6 class="fw-semibold">No transactions recorded yet</h6>
+                <p class="text-muted small mb-3">Make your first deposit or fund transfer to see your ledger activity here.</p>
+                <a asp-controller="Transaction" asp-action="Deposit" class="btn btn-sm btn-success">
+                    <i class="fa-solid fa-circle-down me-1"></i> Make a Deposit
+                </a>
+            </div>
+        }
+    </div>
+</div>

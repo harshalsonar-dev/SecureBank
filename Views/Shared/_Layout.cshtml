@@ -1,0 +1,207 @@
+@using Microsoft.AspNetCore.Http
+@{
+    var userId = Context.Session.GetInt32("UserId");
+    var username = Context.Session.GetString("Username");
+    var role = Context.Session.GetString("Role");
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SecureBank Enterprise</title>
+    <!-- Bootstrap 5 CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- FontAwesome 6 Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Bootstrap Icons CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <style>
+        :root {
+            --sb-navy-dark: #071527;
+            --sb-navy-primary: #0b2239;
+            --sb-navy-light: #163659;
+            --sb-accent-gold: #f59e0b;
+            --sb-accent-cyan: #06b6d4;
+            --sb-bg: #f8fafc;
+            --sb-card-border: #e2e8f0;
+        }
+        body {
+            background-color: var(--sb-bg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: #1e293b;
+        }
+        .navbar-custom {
+            background: linear-gradient(135deg, var(--sb-navy-dark) 0%, var(--sb-navy-primary) 100%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+        .navbar-brand-custom {
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: #ffffff !important;
+            font-size: 1.35rem;
+        }
+        .nav-link {
+            font-weight: 500;
+            color: #cbd5e1 !important;
+            padding: 0.5rem 0.9rem !important;
+            border-radius: 0.375rem;
+            transition: all 0.2s ease-in-out;
+        }
+        .nav-link:hover {
+            color: #ffffff !important;
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+        .nav-link.active {
+            color: #ffffff !important;
+            background-color: rgba(6, 182, 212, 0.18);
+            font-weight: 600;
+        }
+        .card-custom {
+            border: 1px solid var(--sb-card-border);
+            border-radius: 0.85rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.04), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .btn-custom-primary {
+            background-color: #0284c7;
+            border-color: #0284c7;
+            color: #ffffff;
+            font-weight: 600;
+        }
+        .btn-custom-primary:hover {
+            background-color: #0369a1;
+            border-color: #0369a1;
+            color: #ffffff;
+        }
+        .footer-custom {
+            background: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom py-2">
+        <div class="container">
+            <a class="navbar-brand navbar-brand-custom d-flex align-items-center" asp-controller="Transaction" asp-action="Dashboard">
+                <i class="fa-solid fa-building-columns text-info fs-4 me-2"></i>
+                <span>Secure<span class="text-info">Bank</span></span>
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#secureBankNav" aria-controls="secureBankNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="secureBankNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    @if (userId.HasValue)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Dashboard" ? "active" : "")" asp-controller="Transaction" asp-action="Dashboard">
+                                <i class="fa-solid fa-chart-line me-1 text-info"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Transfer" ? "active" : "")" asp-controller="Transaction" asp-action="Transfer">
+                                <i class="fa-solid fa-money-bill-transfer me-1 text-primary"></i> Transfer
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Deposit" ? "active" : "")" asp-controller="Transaction" asp-action="Deposit">
+                                <i class="fa-solid fa-circle-down me-1 text-success"></i> Deposit
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Withdraw" ? "active" : "")" asp-controller="Transaction" asp-action="Withdraw">
+                                <i class="fa-solid fa-circle-up me-1 text-danger"></i> Withdraw
+                            </a>
+                        </li>
+                    }
+                </ul>
+
+                <div class="d-flex align-items-center gap-2">
+                    @if (userId.HasValue)
+                    {
+                        <div class="d-flex align-items-center me-2 text-light">
+                            <span class="badge bg-primary bg-opacity-25 text-info border border-info border-opacity-25 me-2 px-2 py-1">@role</span>
+                            <i class="fa-solid fa-circle-user fs-5 me-1 text-info"></i>
+                            <span class="fw-semibold small">@username</span>
+                        </div>
+                        <form asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-outline-light btn-sm px-3">
+                                <i class="fa-solid fa-arrow-right-from-bracket me-1"></i> Logout
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <a class="btn btn-outline-light btn-sm px-3 fw-semibold" asp-controller="Auth" asp-action="Login">
+                            <i class="fa-solid fa-lock me-1"></i> Sign In
+                        </a>
+                        <a class="btn btn-info btn-sm px-3 fw-semibold text-white" asp-controller="Auth" asp-action="Register">
+                            <i class="fa-solid fa-user-plus me-1"></i> Open Account
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Global Alert Banners -->
+    <div class="container mt-3">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show shadow-sm border-0 d-flex align-items-center" role="alert">
+                <i class="fa-solid fa-circle-check fs-5 text-success me-2"></i>
+                <div>
+                    <strong>Success:</strong> @TempData["SuccessMessage"]
+                </div>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show shadow-sm border-0 d-flex align-items-center" role="alert">
+                <i class="fa-solid fa-triangle-exclamation fs-5 text-danger me-2"></i>
+                <div>
+                    <strong>Action Denied:</strong> @TempData["ErrorMessage"]
+                </div>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+    </div>
+
+    <!-- Main Content Body -->
+    <main class="container py-4">
+        @RenderBody()
+    </main>
+
+    <!-- Production Footer -->
+    <footer class="footer-custom py-3 mt-auto">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center flex-wrap small text-muted">
+                <div>
+                    <strong>SecureBank Enterprise</strong> &copy; @DateTime.UtcNow.Year. All Rights Reserved.
+                </div>
+                <div class="d-flex gap-3">
+                    <span><i class="fa-solid fa-shield-halved text-success"></i> 256-Bit TLS Security</span>
+                    <span><i class="fa-solid fa-database text-info"></i> ACID Pessimistic Concurrency</span>
+                    <span><i class="fa-solid fa-server text-secondary"></i> Pure ADO.NET Engine</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 Bundle JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
